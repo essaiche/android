@@ -1,7 +1,9 @@
-#download and extract Android NDK to /home/ahmed/android-ndk-r17b
-#generate the android toolchain for your architecture as described here:
+#Instructions to compile iw utility for android.
+
+#Download and extract Android NDK to /home/ahmed/android-ndk-r17b
+#generate the android toolchain for your API level and architecture as described here:
 #https://developer.android.com/ndk/guides/standalone_toolchain
-#add the path to generated toolchain to $PATH
+#add the path to the generated toolchain to your $PATH
 
 #download libnl-3.2.25 and extract to /home/ahmed/libnl-3.2.25
 ./configure --host=aarch64-linux-android --disable-pthreads --disable-cli --prefix=/home/ahmed/libnl-3.2.25/vasa
