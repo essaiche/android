@@ -1,0 +1,14 @@
+#download and extract Android NDK to /home/ahmed/android-ndk-r17b
+#generate the android toolchain for your architecture as described here:
+#https://developer.android.com/ndk/guides/standalone_toolchain
+#add the path to generated toolchain to $PATH
+
+#download libnl-3.2.25 and extract to /home/ahmed/libnl-3.2.25
+./configure --host=aarch64-linux-android --disable-pthreads --disable-cli --prefix=/home/ahmed/libnl-3.2.25/vasa
+make && make install
+
+#download, extract and compile iw
+LD=aarch64-linux-android-ld CC=aarch64-linux-android-gcc NO_PKG_CONFIG=1 \
+LDFLAGS="--sysroot=/home/ahmed/android-ndk-r17b/platforms/android-24/arch-arm64 -pie" \
+CFLAGS="-DCONFIG_LIBNL30 -fPIE -I/home/ahmed/libnl-3.2.25/vasa/include/libnl3" \
+LIBS="-lm /home/ahmed/libnl-3.2.25/vasa/lib/libnl-3.a /home/ahmed/libnl-3.2.25/vasa/lib/libnl-genl-3.a" make V=1
