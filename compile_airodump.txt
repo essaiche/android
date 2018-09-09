@@ -1,0 +1,30 @@
+First clone complete aircrack: git clone https://github.com/aircrack-ng/aircrack-ng
+git hash of the tested version: c0a215c025f07b10aec91c5645899cc0b6163faa
+
+airodump has 2 dependencies libnl and openssl (libssl.so, libcrypto.so). How to compile libnl see in compile_iw.txt
+I was lazy to cross compile openssl for android, so I took already compiled libraries: libssl.so, libcrypto.so 
+from my android phone where I will run airodump. The headers I took from /usr/include/openssl of my Ubuntu and copied it to shitopenssl/h.
+It could be a version missmatch but it worked.
+
+Now compile:
+
+LIBNL_PATH="/home/ahmed/libnl-3.2.25/vasa"
+OPENSSL_SO_PATH=$(pwd)"/shitopenssl/so"
+CC=aarch64-linux-android-gcc
+
+$CC -std=gnu11 -Iinclude -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c crypto.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-osdep/file.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -I$LIBNL_PATH/include/libnl3 -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30   -c aircrack-osdep/linux.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-util/console.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c uniqueiv.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-util/verifyssid.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-util/mcs_index_rates.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-util/common.c -o util_common.o
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-osdep/osdep.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-osdep/common.c -o osdep_common.o
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-osdep/radiotap/radiotap.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c aircrack-osdep/network.c
+$CC -std=gnu11 -Iinclude -I$(pwd) -Ishitopenssl/h -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -c airodump-ng.c
+
+
+$CC -std=gnu11 -Iinclude -Ishitopenssl/h -I$LIBNL_PATH/include/libnl3 -D_REVISION=1234 -DCONFIG_LIBNL=1 -DCONFIG_LIBNL30 -pie -lm -L$OPENSSL_SO_PATH -lssl -lcrypto osdep_common.o util_common.o linux.o crypto.o file.o console.o mcs_index_rates.o network.o osdep.o radiotap.o uniqueiv.o verifyssid.o airodump-ng.o $LIBNL_PATH/lib/libnl-3.a  $LIBNL_PATH/lib/libnl-genl-3.a -o airodump
