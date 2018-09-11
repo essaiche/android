@@ -1,0 +1,23 @@
+#How to compile OpenSSL v1.1.0i for android 7 using android-ndk-r17b
+
+#Download and extract Android NDK to /home/ahmed/android-ndk-r17b
+#generate the android toolchain for your API level and architecture as described here:
+#https://developer.android.com/ndk/guides/standalone_toolchain
+
+NDK=/home/ahmed/android-ndk-r17b
+TargetDir=/tmp/openssl-android
+ARCH=arch-arm64
+TARGET=aarch64-linux-android
+BUILD_OS=linux-x86_64
+TOOLCHAIN_BIN=/opt/toolchains/android_6/bin
+export SYSROOT=/opt/toolchains/android_6/sysroot
+export CROSS_SYSROOT=${SYSROOT}
+export CC=${TOOLCHAIN_BIN}/${TARGET}-gcc
+export AR=${TOOLCHAIN_BIN}/${TARGET}-ar
+export RANLIB=${TOOLCHAIN_BIN}/${TARGET}-ranlib
+mkdir $TargetDir
+./Configure shared android64-aarch64 --prefix=$TargetDir
+make depend
+make -j4
+make install_sw
+${TOOLCHAIN_BIN}/${TARGET}-strip --strip-all /tmp/openssl-android/lib/{libcrypto.so.1.1,libssl.so.1.1} /tmp/openssl-android/bin/openssl
