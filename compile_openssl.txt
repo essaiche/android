@@ -1,16 +1,18 @@
-#How to compile OpenSSL v1.1.0i for android 7 using android-ndk-r17b
+#How to compile OpenSSL (v1.1.0i) for android using android-ndk-r17c
 
-#Download and extract Android NDK to /home/ahmed/android-ndk-r17b
-#generate the android toolchain for your API level and architecture as described here:
-#https://developer.android.com/ndk/guides/standalone_toolchain
+#Download and extract Android NDK (android-ndk-r17c) to you home Dir.
+#Do not use newer version, because the GCC compiler was removed since r18
+#and OpenSSL could not be compiled with CLANG (Dec 2018).
+#generate the android toolchain for your API level and architecture:
+sudo android-ndk-r17c/build/tools/make_standalone_toolchain.py --arch arm64 --api 26 --install-dir /opt/toolchains/oreo_ndk-r17b
 
-NDK=/home/ahmed/android-ndk-r17b
 TargetDir=/tmp/openssl-android
+TOOLCHAIN_PATH=/opt/toolchains/oreo_ndk-r17b
 ARCH=arch-arm64
 TARGET=aarch64-linux-android
 BUILD_OS=linux-x86_64
-TOOLCHAIN_BIN=/opt/toolchains/android_6/bin
-export SYSROOT=/opt/toolchains/android_6/sysroot
+TOOLCHAIN_BIN=$TOOLCHAIN_PATH/bin
+export SYSROOT=$TOOLCHAIN_PATH/sysroot
 export CROSS_SYSROOT=${SYSROOT}
 export CC=${TOOLCHAIN_BIN}/${TARGET}-gcc
 export AR=${TOOLCHAIN_BIN}/${TARGET}-ar
@@ -20,4 +22,4 @@ mkdir $TargetDir
 make depend
 make -j4
 make install_sw
-${TOOLCHAIN_BIN}/${TARGET}-strip --strip-all /tmp/openssl-android/lib/{libcrypto.so.1.1,libssl.so.1.1} /tmp/openssl-android/bin/openssl
+${TOOLCHAIN_BIN}/${TARGET}-strip --strip-all $TargetDir/lib/{libcrypto.so.1.1,libssl.so.1.1} $TargetDir/bin/openssl
