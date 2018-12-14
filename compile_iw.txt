@@ -15,7 +15,7 @@ make && make install
 cd ~/iw-4.14
 IW_LOCATION=$HOME/libnl-3.2.25
 NDK_LOCATION=$HOME/android-ndk-r17c
-D=aarch64-linux-android-ld CC=aarch64-linux-android-gcc NO_PKG_CONFIG=1 \
+LD=aarch64-linux-android-ld CC=aarch64-linux-android-gcc NO_PKG_CONFIG=1 \
 LDFLAGS="--sysroot=$NDK_LOCATION/platforms/android-26/arch-arm64 -pie" \
 CFLAGS="-DCONFIG_LIBNL30 -fPIE -I$IW_LOCATION/vasa/include/libnl3" \
 LIBS="-lm $IW_LOCATION/vasa/lib/libnl-3.a $IW_LOCATION/vasa/lib/libnl-genl-3.a" make V=1
