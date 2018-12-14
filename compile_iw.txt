@@ -1,16 +1,22 @@
 #Instructions to compile iw utility for android.
 
-#Download and extract Android NDK to /home/ahmed/android-ndk-r17b
+#Download and extract Android NDK to /home/ahmed/android-ndk-r17c
 #generate the android toolchain for your API level and architecture as described here:
 #https://developer.android.com/ndk/guides/standalone_toolchain
 #add the path to the generated toolchain to your $PATH
 
-#download libnl-3.2.25 and extract to /home/ahmed/libnl-3.2.25
-./configure --host=aarch64-linux-android --disable-pthreads --disable-cli --prefix=/home/ahmed/libnl-3.2.25/vasa
+#download libnl-3.2.25 and extract to youe home dir
+cd ~/libnl-3.2.25
+IW_LOCATION=$HOME/libnl-3.2.25
+./configure --host=aarch64-linux-android --disable-pthreads --disable-cli --prefix=$IW_LOCATION/vasa
 make && make install
+-------------------------------------------------------------
+#download, extract and compile iw-4.14
+cd ~/iw-4.14
+IW_LOCATION=$HOME/libnl-3.2.25
+NDK_LOCATION=$HOME/android-ndk-r17c
+D=aarch64-linux-android-ld CC=aarch64-linux-android-gcc NO_PKG_CONFIG=1 \
+LDFLAGS="--sysroot=$NDK_LOCATION/platforms/android-26/arch-arm64 -pie" \
+CFLAGS="-DCONFIG_LIBNL30 -fPIE -I$IW_LOCATION/vasa/include/libnl3" \
+LIBS="-lm $IW_LOCATION/vasa/lib/libnl-3.a $IW_LOCATION/vasa/lib/libnl-genl-3.a" make V=1
 
-#download, extract and compile iw
-LD=aarch64-linux-android-ld CC=aarch64-linux-android-gcc NO_PKG_CONFIG=1 \
-LDFLAGS="--sysroot=/home/ahmed/android-ndk-r17b/platforms/android-24/arch-arm64 -pie" \
-CFLAGS="-DCONFIG_LIBNL30 -fPIE -I/home/ahmed/libnl-3.2.25/vasa/include/libnl3" \
-LIBS="-lm /home/ahmed/libnl-3.2.25/vasa/lib/libnl-3.a /home/ahmed/libnl-3.2.25/vasa/lib/libnl-genl-3.a" make V=1
